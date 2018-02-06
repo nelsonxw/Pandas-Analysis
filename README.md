@@ -18,6 +18,6 @@
 	
 	<br>
 	
-	[Codes can be found here](https://github.com/nelsonxw/Pandas-Analysis/blob/master/HeroesOfPymoli_results.ipynb)
+	[Codes and data can be found here](https://github.com/nelsonxw/Pandas-Analysis/blob/master/HeroesOfPymoli_results.ipynb)
 	
   
