@@ -18,7 +18,7 @@
   
   <br>
   
-  [Codes and data can be found here](https://github.com/nelsonxw/Pandas_Analysis/blob/master/HeroesOfPymoli_results.ipynb)
+  [Link to codes and results](https://github.com/nelsonxw/Pandas_Analysis/blob/master/HeroesOfPymoli_results.ipynb)
 
 
 ```python
@@ -45,19 +45,7 @@ pd.DataFrame({'Total Players':[player_count]})
 
 
 <div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
 
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
