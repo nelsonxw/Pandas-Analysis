@@ -478,7 +478,7 @@ popular_df
 
 <table border="1" class="dataframe">
   <thead>
-    <tr style="text-align: left;">
+    <tr style="text-align: right;">
       <th></th>
       <th></th>
       <th>Purchase Count</th>
