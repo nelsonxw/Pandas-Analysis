@@ -21,13 +21,16 @@
   [Link to codes and results](https://github.com/nelsonxw/Pandas_Analysis/blob/master/HeroesOfPymoli_results.ipynb)
 
 
+
 ```python
+# import dependencies
 import pandas as pd
 import os
 ```
 
 
 ```python
+# define source data locations, import and combine data
 file_1 = os.path.join('HeroesOfPymoli','purchase_data.json')
 file_2 = os.path.join('HeroesOfPymoli','purchase_data2.json')
 df_1 = pd.read_json(file_1)
@@ -37,6 +40,7 @@ df = df_1.append(df_2,ignore_index=True)
 
 
 ```python
+# Report unique player count
 player_count = len(df['SN'].unique())
 pd.DataFrame({'Total Players':[player_count]})
 ```
@@ -66,10 +70,15 @@ pd.DataFrame({'Total Players':[player_count]})
 
 
 ```python
+# Count unique items
 item_count = len(df['Item Name'].unique())
+# Calculate average price and change format
 average_price = '${:,.2f}'.format(df['Price'].mean())
+# Count total number of purchases
 purchase_count = df['Item Name'].count()
+# Calculate total revenue and change format
 revenue = '${:,.2f}'.format(df['Price'].sum())
+# Report purchase analysis
 pd.DataFrame([[item_count,average_price,purchase_count,revenue]],
              columns=['Number of Unique Items',
                       'Average Purchase Price',
@@ -108,11 +117,17 @@ pd.DataFrame([[item_count,average_price,purchase_count,revenue]],
 
 
 ```python
+# Remove duplicate players from the purchase list
 unique_df = df.drop_duplicates(['SN'])
+# Count unique players by gender
 gender_df = pd.DataFrame(unique_df['Gender'].value_counts())
+# Change column header
 gender_df.rename(columns = {'Gender':'Total Count'},inplace=True)
+# Calculate the total number of unique players
 gender_total = gender_df['Total Count'].sum()
+# Add new column to show % of total players by gender
 gender_df['Percentage of Players'] = (gender_df['Total Count'] / gender_total * 100).apply('{:,.2f}'.format)
+# Move columns around and report out gender demographics
 gender_df = gender_df[['Percentage of Players','Total Count']]
 gender_df
 
@@ -155,12 +170,19 @@ gender_df
 
 
 ```python
+# Define column names
 column_name = {'count':'Purchase Count','mean':'Average Purchase Price','sum':'Total Purchase Value'}
+# Group by gender and count number of purchases, average price and total purchase price
 purchase_df = df.groupby(['Gender']).agg({'Gender':'count','Price':['mean','sum']}).rename(columns = column_name)
+# Remove level 0 of multi-index on the columns
 purchase_df.columns = purchase_df.columns.droplevel(0)
+# Calculate normalized totals and change the format
 purchase_df['Normazlied Totals'] = (purchase_df['Total Purchase Value'] / gender_df['Total Count']).apply('${:,.2f}'.format)
+# Change the format of average price
 purchase_df['Average Purchase Price'] = purchase_df['Average Purchase Price'].apply('${:,.2f}'.format)
+# Change the format of total purchase price
 purchase_df['Total Purchase Value'] = purchase_df['Total Purchase Value'].apply('${:,.2f}'.format)
+# Report out purchasing analysis by gender
 purchase_df
 ```
 
@@ -216,20 +238,31 @@ purchase_df
 
 
 ```python
+# Create bins for different age groups
 bins = [0,9,14,19,24,29,34,39,100]
+# Define group labels
 group_name = ['<10','10-14','15-19','20-24','25-29','30-34','35-39','40+']
+# Assign age to differnt age groups
 age_df = pd.cut(df['Age'],bins,labels = group_name)
+# Add new column to show age group
 df['Age group'] = age_df
+# Count number of purchase by age group
 age_group_count = df['Age group'].value_counts()
 ```
 
 
 ```python
+# Group data by age group and calculate number of purchase, average price and total purchase price, rename column headers
 age_df = df.groupby(['Age group']).agg({'SN':'count','Price':['mean','sum']}).rename(columns = column_name)
+# Remove level 0 of multi-index on the columns
 age_df.columns = age_df.columns.droplevel(0)
+# Calculate normalized totals and change the format
 age_df['Normalized Totals'] = (age_df['Total Purchase Value'] / age_group_count).apply('${:,.2f}'.format)
+# Change the format of average price
 age_df['Average Purchase Price'] = age_df['Average Purchase Price'].apply('${:,.2f}'.format)
+# Change the format of total purchase price
 age_df['Total Purchase Value'] = age_df['Total Purchase Value'].apply('${:,.2f}'.format)
+# Report out age demographics and purhcase analysis
 age_df
 ```
 
@@ -320,11 +353,17 @@ age_df
 
 
 ```python
+# Group data by player and calcuate the number of purchases, average price and total purchase value
 top_spender_df = df.groupby(['SN']).agg({'SN':'count','Price':['mean','sum']}).rename(columns = column_name)
+# Remove level 0 of multi-index on the columns
 top_spender_df.columns = top_spender_df.columns.droplevel(0)
+# Select the top 5 players
 top_spender_df = top_spender_df.nlargest(5,'Total Purchase Value')
+# Change the format of average price
 top_spender_df['Average Purchase Price'] = top_spender_df['Average Purchase Price'].apply('${:,.2f}'.format)
+# Change the format of total purchase price
 top_spender_df['Total Purchase Value'] = top_spender_df['Total Purchase Value'].apply('${:,.2f}'.format)
+# Report out top spender analysis
 top_spender_df
 ```
 
@@ -387,12 +426,19 @@ top_spender_df
 
 
 ```python
+# Define column names
 column_name = {'count':'Purchase Count','min':'Item Price','sum':'Total Purchase Value'}
+# Group data by items and calcuate the number of purchases, item price (min price or max price) and total purchase value
 popular_df = df.groupby(['Item ID','Item Name']).agg({'Item ID':'count','Price':['min','sum']}).rename(columns = column_name)
+# Remove level 0 of multi-index on the columns 
 popular_df.columns = popular_df.columns.droplevel(0)
+# Select the top 5 sold items
 popular_df = popular_df.nlargest(5,'Purchase Count')
+# Change the format of item price
 popular_df['Item Price'] = popular_df['Item Price'].apply('${:,.2f}'.format)
+# Change the format of total purchase price
 popular_df['Total Purchase Value'] = popular_df['Total Purchase Value'].apply('${:,.2f}'.format)
+# Report out most popular items
 popular_df
 ```
 
@@ -462,12 +508,19 @@ popular_df
 
 
 ```python
+# Define column names
 column_name = {'count':'Purchase Count','min':'Item Price','sum':'Total Purchase Value'}
-popular_df = df.groupby(['Item ID','Item Name']).agg({'Item ID':'count','Price':['min','sum']}).rename(columns = column_name)
-popular_df.columns = popular_df.columns.droplevel(0)
-popular_df = popular_df.nlargest(5,'Total Purchase Value')
-popular_df['Item Price'] = popular_df['Item Price'].apply('${:,.2f}'.format)
-popular_df['Total Purchase Value'] = popular_df['Total Purchase Value'].apply('${:,.2f}'.format)
+# Group data by items and calcuate the number of purchases, item price (min price or max price) and total purchase value
+profitable_df = df.groupby(['Item ID','Item Name']).agg({'Item ID':'count','Price':['min','sum']}).rename(columns = column_name)
+# Remove level 0 of multi-index on the columns 
+profitable_df.columns = profitable_df.columns.droplevel(0)
+# Select the top 5 items by total purchase value
+profitable_df = profitable_df.nlargest(5,'Total Purchase Value')
+# Change the format of item price
+profitable_df['Item Price'] = profitable_df['Item Price'].apply('${:,.2f}'.format)
+# Change the format of total purchase price
+profitable_df['Total Purchase Value'] = profitable_df['Total Purchase Value'].apply('${:,.2f}'.format)
+# Report out most profitable items
 popular_df
 ```
 
@@ -495,39 +548,39 @@ popular_df
   </thead>
   <tbody>
     <tr>
-      <th>34</th>
-      <th>Retribution Axe</th>
-      <td>9</td>
-      <td>$4.14</td>
-      <td>$37.26</td>
-    </tr>
-    <tr>
-      <th>107</th>
-      <th>Splitter, Foe Of Subtlety</th>
-      <td>9</td>
-      <td>$3.61</td>
-      <td>$33.03</td>
-    </tr>
-    <tr>
-      <th>115</th>
-      <th>Spectral Diamond Doomblade</th>
-      <td>7</td>
-      <td>$4.25</td>
-      <td>$29.75</td>
-    </tr>
-    <tr>
-      <th>32</th>
-      <th>Orenmir</th>
-      <td>6</td>
-      <td>$4.95</td>
-      <td>$29.70</td>
-    </tr>
-    <tr>
       <th>84</th>
       <th>Arcane Gem</th>
       <td>12</td>
       <td>$2.23</td>
       <td>$29.34</td>
+    </tr>
+    <tr>
+      <th>39</th>
+      <th>Betrayal, Whisper of Grieving Widows</th>
+      <td>11</td>
+      <td>$2.35</td>
+      <td>$25.85</td>
+    </tr>
+    <tr>
+      <th>31</th>
+      <th>Trickster</th>
+      <td>10</td>
+      <td>$2.07</td>
+      <td>$23.22</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <th>Serenity</th>
+      <td>9</td>
+      <td>$1.49</td>
+      <td>$13.41</td>
+    </tr>
+    <tr>
+      <th>34</th>
+      <th>Retribution Axe</th>
+      <td>9</td>
+      <td>$4.14</td>
+      <td>$37.26</td>
     </tr>
   </tbody>
 </table>
